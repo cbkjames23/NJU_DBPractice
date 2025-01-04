@@ -52,8 +52,13 @@ private:
 
     explicit LRUKNode(frame_id_t fid, size_t k) : fid_(fid), k(k), is_evictable_(false) {}
 
-    void AddHistory(timestamp_t ts) { WSDB_STUDENT_TODO(l1, f1); }
+    void AddHistory(timestamp_t ts) { 
+      history_.push_back(ts);
+      if(history_.size() == k + 1)
+        history_.pop_front();
+    }
 
+    auto GetPre() -> timestamp_t {return history_.front();}
     /**
      * Get the distance between the current timestamp and the k-th timestamp in the history,
      * think: why return type is unsigned long long?
@@ -62,12 +67,13 @@ private:
      */
     auto GetBackwardKDistance(timestamp_t cur_ts) -> unsigned long long
     {
-      WSDB_STUDENT_TODO(l1, f1);
+      if(history_.size() < k) return std::numeric_limits<unsigned long long>::max();
+      else return cur_ts - history_.front();
     }
 
-    [[nodiscard]] auto IsEvictable() const -> bool { WSDB_STUDENT_TODO(l1, f1); }
+    [[nodiscard]] auto IsEvictable() const -> bool { return is_evictable_; }
 
-    auto SetEvictable(bool set_evictable) -> void { WSDB_STUDENT_TODO(l1, f1); }
+    auto SetEvictable(bool set_evictable) -> void { is_evictable_ = set_evictable;}
 
   private:
     std::list<timestamp_t> history_;

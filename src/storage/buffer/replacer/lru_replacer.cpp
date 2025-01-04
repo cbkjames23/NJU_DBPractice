@@ -26,12 +26,55 @@ namespace wsdb {
 
 LRUReplacer::LRUReplacer() : cur_size_(0), max_size_(BUFFER_POOL_SIZE) {}
 
-auto LRUReplacer::Victim(frame_id_t *frame_id) -> bool { WSDB_STUDENT_TODO(l1, t1); }
+auto LRUReplacer::Victim(frame_id_t *frame_id) -> bool { 
+    std::lock_guard<std::mutex> lock(latch_);
+    if(lru_list_.empty()){
+        return false;
+    }
+    auto it = lru_list_.begin();
+    while(it != lru_list_.end()){
+        if(it->second){
+            --cur_size_;
+            //std::cout << cur_size_ << " " << it->first << std::endl;
+            *frame_id = it->first;
+            lru_hash_.erase(it->first);
+            lru_list_.erase(it);
+            return true;
+        }
+        ++it;   
+    }
+    return false;
+}
 
-void LRUReplacer::Pin(frame_id_t frame_id) { WSDB_STUDENT_TODO(l1, t1); }
+void LRUReplacer::Pin(frame_id_t frame_id) { 
+    std::lock_guard<std::mutex> lock(latch_);
+    //std::cout << "Pin" << frame_id << " " << cur_size_ << std::endl;
+    if (lru_hash_.find(frame_id) != lru_hash_.end()) {
+        auto it = lru_hash_[frame_id]; 
+        if(it->second)
+            cur_size_--; 
+        lru_list_.erase(it);  
+        lru_hash_.erase(frame_id); 
+    }
+    lru_list_.emplace_back(frame_id, false);
+    lru_hash_[frame_id] = --lru_list_.end();
+}
 
-void LRUReplacer::Unpin(frame_id_t frame_id) { WSDB_STUDENT_TODO(l1, t1); }
 
-auto LRUReplacer::Size() -> size_t { WSDB_STUDENT_TODO(l1, t1); }
+void LRUReplacer::Unpin(frame_id_t frame_id) { 
+    std::lock_guard<std::mutex> lock(latch_);
+    //std::cout << "Unpin" << frame_id << " " << cur_size_ << std::endl;
+    if(lru_hash_.find(frame_id) != lru_hash_.end()){
+        if(!lru_hash_[frame_id]->second){
+            lru_hash_[frame_id]->second = true;
+            ++cur_size_;
+        }
+    }
+}
+
+auto LRUReplacer::Size() -> size_t { 
+    std::lock_guard<std::mutex> lock(latch_);
+    return cur_size_;
+}
 
 }  // namespace wsdb

@@ -44,8 +44,34 @@ void UpdateExecutor::Next()
 {
   // number of updated records
   int count = 0;
-
-  WSDB_STUDENT_TODO(l2, t1);
+  for(child_->Init() ; !child_->IsEnd() ; child_->Next()){
+    auto child_record = child_->GetRecord();
+    if(child_record){
+      std::vector<ValueSptr> new_value;
+      auto sch = child_record->GetSchema();
+      for(size_t i = 0 ; i < sch->GetFieldCount() ; ++i){
+        bool find = false;
+        for(auto update : updates_){
+          auto field = update.first;
+          auto value = update.second;
+          if(field.field_.field_name_ == sch->GetFieldAt(i).field_.field_name_){
+            find = true;
+            new_value.push_back(value);
+          }
+        }
+        if(!find) new_value.push_back(child_record->GetValueAt(i));
+        // if(sch->GetFieldAt(i).field_.field_name_ == updates_[pos].first.field_.field_name_){
+        //   new_value.push_back(updates_[pos].second);
+        //   pos++;
+        // }
+        // else new_value.push_back(child_record->GetValueAt(i));
+      }
+      auto u_record = std::make_unique<Record>(sch, new_value, child_record->GetRID());
+      tbl_->UpdateRecord(child_record->GetRID(), *u_record);
+      for(auto index : indexes_)  index->UpdateRecord(*child_record, *u_record);
+      count++;
+    }
+  }
 
   std::vector<ValueSptr> values{ValueFactory::CreateIntValue(count)};
   record_ = std::make_unique<Record>(out_schema_.get(), values, INVALID_RID);

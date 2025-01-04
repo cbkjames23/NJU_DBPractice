@@ -27,14 +27,19 @@ SeqScanExecutor::SeqScanExecutor(TableHandle *tab) : AbstractExecutor(Basic), ta
 
 void SeqScanExecutor::Init()
 {
-  rid_ = tab_->GetFirstRID();
-  
-  WSDB_STUDENT_TODO(l2, t1);
+  rid_ = tab_->GetFirstRID() ;
+  record_ = tab_->GetRecord(rid_);
 }
 
-void SeqScanExecutor::Next() { WSDB_STUDENT_TODO(l2, t1); }
+void SeqScanExecutor::Next() { 
+  rid_ = tab_->GetNextRID(rid_);
+  if(IsEnd()) return ;
+  record_ = tab_->GetRecord(rid_);
+}
 
-auto SeqScanExecutor::IsEnd() const -> bool { WSDB_STUDENT_TODO(l2, t1); }
+auto SeqScanExecutor::IsEnd() const -> bool { 
+  return rid_ == INVALID_RID;
+}
 
 auto SeqScanExecutor::GetOutSchema() const -> const RecordSchema * { return &tab_->GetSchema(); }
 }  // namespace wsdb
