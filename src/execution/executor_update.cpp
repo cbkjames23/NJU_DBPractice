@@ -51,12 +51,14 @@ void UpdateExecutor::Next()
       auto sch = child_record->GetSchema();
       for(size_t i = 0 ; i < sch->GetFieldCount() ; ++i){
         bool find = false;
+        auto field_name = sch->GetFieldAt(i).field_.field_name_;
         for(auto update : updates_){
           auto field = update.first;
           auto value = update.second;
-          if(field.field_.field_name_ == sch->GetFieldAt(i).field_.field_name_){
+          if(field.field_.field_name_ == field_name){
             find = true;
             new_value.push_back(value);
+            break;
           }
         }
         if(!find) new_value.push_back(child_record->GetValueAt(i));
@@ -66,8 +68,9 @@ void UpdateExecutor::Next()
         // }
         // else new_value.push_back(child_record->GetValueAt(i));
       }
-      auto u_record = std::make_unique<Record>(sch, new_value, child_record->GetRID());
-      tbl_->UpdateRecord(child_record->GetRID(), *u_record);
+      auto rid = child_record->GetRID();
+      auto u_record = std::make_unique<Record>(sch, new_value, rid);
+      tbl_->UpdateRecord(rid, *u_record);
       for(auto index : indexes_)  index->UpdateRecord(*child_record, *u_record);
       count++;
     }
