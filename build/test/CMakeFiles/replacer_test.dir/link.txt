@@ -1,0 +1,1 @@
+/usr/bin/c++  -Wall -O3 -fPIC   CMakeFiles/replacer_test.dir/storage/replacer_test.cpp.o  -o ../bin/replacer_test  -Wl,-rpath,/home/cbk/NJU_DBPractice/build/lib ../lib/libstorage_buffer.so ../lib/libgtest.a ../lib/libstorage_disk.so ../lib/libfmt.a -lpthread 

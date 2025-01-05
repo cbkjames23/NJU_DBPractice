@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -Wall -O3 -fPIC  -shared -Wl,-soname,libcommon_net.so -o ../lib/libcommon_net.so CMakeFiles/common_net.dir/net/net.cpp.o  ../lib/libfmt.a 

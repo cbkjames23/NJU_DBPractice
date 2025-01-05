@@ -1,0 +1,1 @@
+/usr/bin/c++  -Wall -O3 -fPIC   CMakeFiles/client.dir/client.cpp.o  -o ../bin/client  -Wl,-rpath,/home/cbk/NJU_DBPractice/build/lib ../lib/libcommon_net.so -lreadline ../lib/libfmt.a 

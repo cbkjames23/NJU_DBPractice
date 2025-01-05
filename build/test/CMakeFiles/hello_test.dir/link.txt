@@ -1,0 +1,1 @@
+/usr/bin/c++  -Wall -O3 -fPIC   CMakeFiles/hello_test.dir/hello.cpp.o  -o ../bin/hello_test  ../lib/libgtest.a -lpthread 

@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -Wall -O3 -fPIC  -shared -Wl,-soname,libparser.so -o ../../lib/libparser.so CMakeFiles/parser.dir/yacc.tab.cpp.o CMakeFiles/parser.dir/lex.yy.cpp.o CMakeFiles/parser.dir/ast.cpp.o CMakeFiles/parser.dir/parser.cpp.o  ../../lib/libfmt.a 

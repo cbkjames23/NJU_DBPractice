@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -Wall -O3 -fPIC  -shared -Wl,-soname,liblog.so -o ../../lib/liblog.so CMakeFiles/log.dir/log_manager.cpp.o CMakeFiles/log.dir/recovery.cpp.o 

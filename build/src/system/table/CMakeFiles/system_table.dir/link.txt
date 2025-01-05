@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../../lib/libsystem_table.a  CMakeFiles/system_table.dir/table_manager.cpp.o
+/usr/bin/ranlib ../../../lib/libsystem_table.a
